@@ -1,0 +1,34 @@
+# Go
+server/server.exe
+server/data.db
+server/tmp/
+
+# Node / React
+web/node_modules/
+web/dist/
+
+# Unity
+unity-ar/Library/
+unity-ar/Temp/
+unity-ar/Obj/
+unity-ar/Build/
+unity-ar/Builds/
+unity-ar/UserSettings/
+unity-ar/*.csproj
+unity-ar/*.unityproj
+unity-ar/*.sln
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+*.key
+*.pem
