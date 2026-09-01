@@ -45,7 +45,13 @@ npm run dev
 
 详见 [unity-ar/README.md](unity-ar/README.md)
 
-⚠️ 需先安装 Unity Editor 并创建项目，再将脚本导入。
+项目已在 Unity Editor 中创建，场景和脚本已配置完成。真机构建需 Mac (iOS) 或直接 Build APK (Android)。
+
+### Unity 真机配置 Go 后端地址
+
+在 ApiClient 组件的 Inspector 中修改 `Server Url`：
+- 模拟器：`http://localhost:8080/api`
+- 真机：`http://<电脑局域网IP>:8080/api`（手机和电脑需同一 WiFi，电脑防火墙放行 8080 端口）
 
 ## API 接口
 
@@ -56,28 +62,59 @@ npm run dev
 | GET | /api/issues | 获取问题列表 |
 | PATCH | /api/issues/:id | 修改问题状态 |
 
+### 创建问题请求体
+
+```json
+{
+  "title": "入口墙面破损",
+  "description": "左侧墙体存在裂缝",
+  "priority": "high",
+  "position": { "x": 0.42, "y": 0.03, "z": 1.26 }
+}
+```
+
+### 修改状态请求体
+
+```json
+{ "status": "in_progress" }
+```
+
 ## 使用版本
 
 - Go 1.27.0
 - Node.js 24.16.0
-- Unity LTS 2022.3+ (待安装)
-- AR Foundation 5.x+
+- npm 11.13.0
+- Unity 2022.3 LTS
+- AR Foundation 5.x
+- React 19 + TypeScript 5.x + Vite 8.x
 
 ## 已完成
 
 - [x] Go 后端：健康检查、创建问题、列表查询、修改状态、参数校验、SQLite 持久化、CORS
-- [x] React 管理端：问题列表、状态修改、错误容错、Vite 代理
-- [x] Unity AR：C# 脚本（数据结构、API 客户端、AR 放置、问题上报）
+- [x] Go 后端：数据重启后仍存在（SQLite IF NOT EXISTS 建表）
+- [x] Go 后端：参数校验（标题必填、枚举值校验、404 未找到）
+- [x] React 管理端：问题列表展示（标题、优先级、状态、描述、时间、位置）
+- [x] React 管理端：状态下拉框修改（open / in_progress / resolved）
+- [x] React 管理端：后端不可用时显示错误提示 + 重试按钮（不白屏）
+- [x] React 管理端：空列表友好提示
+- [x] React 管理端：Vite 代理配置 /api → localhost:8080
+- [x] Unity AR：C# 脚本（ARPlacementManager、IssueReporter、ApiClient、IssueData）
+- [x] Unity AR：场景搭建（XR Origin + AR Camera + Plane Manager + Raycast Manager + EventSystem）
+- [x] Unity AR：ARMarker 预制体 + IssueForm UI Panel（TMP）
+- [x] Unity AR：脚本挂载 + 引用绑定 + 按钮事件绑定
+- [x] Unity AR：UI 防误触（IsTouchOverUI）
+- [x] Unity AR：优先级颜色标记（high=红, medium=黄, low=绿）
+- [x] Unity AR：TMP 组件适配（TMP_InputField / TMP_Dropdown / TextMeshProUGUI）
+- [x] Unity Editor 内编译和 UI 交互测试通过
 
 ## 未完成
 
-- [ ] Unity 项目在 Editor 中创建和配置
-- [ ] AR 场景搭建（AR Session、Plane Manager 等）
-- [ ] UI 表单预制体
-- [ ] 真机测试
-- [ ] 演示视频
+- [ ] 真机 AR 测试（需 Mac 构建 iOS 或 Android 设备）
+- [ ] 演示视频（手机 + 电脑各一段）
+- [ ] gh CLI 安装 + GitHub 推送
 
 ## 已知问题
 
-- Unity 项目尚未通过 Editor 创建，脚本无法单独运行
 - Go 后端 ID 生成使用时间戳+毫秒，高并发下可能重复（原型阶段可接受）
+- iOS 构建需要 Mac + Xcode，当前开发环境为 Windows
+- 修改状态后 updatedAt 时间戳与 createdAt 相同（毫秒精度不足，需确认）
