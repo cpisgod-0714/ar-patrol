@@ -88,6 +88,27 @@ npm run dev
 - AR Foundation 5.x
 - React 19 + TypeScript 5.x + Vite 8.x
 
+## 公网部署（可选）
+
+### Go 后端 → Render
+
+1. 注册 [Render](https://render.com)（GitHub 登录）
+2. New → Web Service → 连接 GitHub 仓库
+3. Root Directory: `server`
+4. Build Command: `go build -o app ./cmd/server/`
+5. Start Command: `./app`
+6. 部署后记下 URL，如 `https://xxx.onrender.com`
+
+### React 前端 → Vercel
+
+1. 注册 [Vercel](https://vercel.com)（GitHub 登录）
+2. Add New Project → 导入 GitHub 仓库
+3. Root Directory: `web`，Framework: Vite
+4. Environment Variables: `VITE_API_BASE = https://xxx.onrender.com/api`
+5. Deploy
+
+⚠️ Render 免费版限制：15 分钟无流量休眠；重新部署后数据丢失（磁盘非持久）。本地运行时 SQLite 持久化正常。
+
 ## 已完成
 
 - [x] Go 后端：健康检查、创建问题、列表查询、修改状态、参数校验、SQLite 持久化、CORS
@@ -111,7 +132,6 @@ npm run dev
 
 - [ ] 真机 AR 测试（需 Mac 构建 iOS 或 Android 设备）
 - [ ] 演示视频（手机 + 电脑各一段）
-- [ ] gh CLI 安装 + GitHub 推送
 
 ## 已知问题
 

@@ -1,6 +1,7 @@
 import type { Issue, Status } from "../types/issue";
 
-const API_BASE = "/api";
+// 生产环境通过 VITE_API_BASE 环境变量注入后端地址；开发环境走 Vite 代理
+const API_BASE = import.meta.env.VITE_API_BASE || "/api";
 
 export async function checkHealth(): Promise<boolean> {
   try {
