@@ -1,17 +1,19 @@
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 /// <summary>
 /// 问题上报表单 — 填写并提交巡检问题到 Go 后端
+/// 使用 TextMeshPro UI 组件
 /// </summary>
 public class IssueReporter : MonoBehaviour
 {
     [Header("UI 引用")]
     [SerializeField] private GameObject formPanel;
-    [SerializeField] private InputField titleInput;
-    [SerializeField] private InputField descriptionInput;
-    [SerializeField] private Dropdown priorityDropdown;
-    [SerializeField] private Text statusText;
+    [SerializeField] private TMP_InputField titleInput;
+    [SerializeField] private TMP_InputField descriptionInput;
+    [SerializeField] private TMP_Dropdown priorityDropdown;
+    [SerializeField] private TextMeshProUGUI statusText;
 
     [Header("API")]
     [SerializeField] private ApiClient apiClient;
@@ -60,14 +62,14 @@ public class IssueReporter : MonoBehaviour
         // 校验标题
         if (string.IsNullOrWhiteSpace(titleInput.text))
         {
-            statusText.text = "⚠️ 标题不能为空";
+            statusText.text = "标题不能为空";
             statusText.color = Color.red;
             return;
         }
 
         if (!markerPosition.HasValue)
         {
-            statusText.text = "⚠️ 位置信息丢失，请重新放置标记";
+            statusText.text = "位置信息丢失，请重新放置标记";
             statusText.color = Color.red;
             return;
         }
@@ -94,7 +96,7 @@ public class IssueReporter : MonoBehaviour
         {
             if (success)
             {
-                statusText.text = "✅ 提交成功";
+                statusText.text = "提交成功!";
                 statusText.color = Color.green;
 
                 // 延迟关闭表单
@@ -102,7 +104,7 @@ public class IssueReporter : MonoBehaviour
             }
             else
             {
-                statusText.text = $"❌ 提交失败: {response}";
+                statusText.text = "提交失败: " + response;
                 statusText.color = Color.red;
             }
         });
