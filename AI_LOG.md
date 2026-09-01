@@ -98,3 +98,80 @@
 - 采用
 - 全部 API 验证通过：health/check → create(201) → list(200) → update(in_progress/resolved)
 - Go 重启后 SQLite 数据保留，3 条记录完整存在
+
+## P-008
+
+- 目标：公网部署 React 管理端 + Go 后端
+
+### Prompt 原文
+
+> react部署 / 创建怎么要我填银行卡号
+
+### 结果
+
+- 部分完成
+- Vercel CLI 已安装（npm install -g vercel）
+- Render 创建服务要求绑信用卡，无法继续
+- 调研替代方案：Cloudflare Tunnel（推荐）、Koyeb、SnapDeploy
+- cloudflared 下载失败（GitHub 被墙，curl/PowerShell 均不通，VPN 对命令行不生效）
+- 待解决：cloudflared 安装
+
+## P-009
+
+- 目标：真机 AR 测试
+
+### Prompt 原文
+
+> 我想做一遍真机检测
+
+### 结果
+
+- 用户仅有 iPhone + Windows，无 Mac 无 Android，无法真机构建
+- 尝试 XR Simulation（com.unity.xr.ar-simulation）安装失败
+- 尝试 Unity Remote 5：iPhone 安装成功，但 Editor 内黑屏（AR Foundation 5.x 不支持 Remote）
+- 最终方案：Editor 模式替代真机
+
+## P-010
+
+- 目标：Unity Editor 模式替代真机测试
+
+### Prompt 原文
+
+> 走 editor 模式吧
+
+### 结果
+
+- 采用
+- 修改 ARPlacementManager.cs：添加 `#if UNITY_EDITOR` 分支，鼠标点击 → 射线与 y=0 平面求交 → 放置标记
+- 新建 EditorModeSetup.cs：自动禁用 AR Session / AR Plane Manager、调整相机位置、创建地面参考平面
+- 真机构建时 Editor 代码通过预编译指令排除，不影响正式功能
+
+## P-011
+
+- 目标：修复 Unity Editor 内 TMP 中文乱码
+
+### Prompt 原文
+
+> 乱码 / 提交跟取消按钮正常，标题描述乱码
+
+### 结果
+
+- 修改后采用
+- 原因：TMP 默认字体（Liberation Sans SDF）不含中文字符
+- 修复：拷贝系统字体 msyh.ttc（Microsoft YaHei）到 Assets/Fonts/，通过 TMP Font Asset Creator 生成 ChineseFont SDF
+- 设置全局默认 Font Asset + 手动替换 InputField/Dropdown 子组件的 Font Asset
+- 中文显示正常
+
+## P-012
+
+- 目标：三端联调 + 录制演示视频
+
+### Prompt 原文
+
+> (主动执行) 启动 Go 后端 → Unity Editor 放置标记提交 → React 管理端查看修改状态 → 录制视频
+
+### 结果
+
+- 采用
+- 全流程验证通过：Unity Editor 点击放置 → 填表单提交 → Go 后端存储 → React 管理端列表显示 + 修改状态
+- 演示视频已录制（Unity Editor 操作 + React 管理端操作）

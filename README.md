@@ -88,9 +88,31 @@ npm run dev
 - AR Foundation 5.x
 - React 19 + TypeScript 5.x + Vite 8.x
 
+## Editor 模式测试（无真机时的替代方案）
+
+项目内置 Editor 模式，可在 Unity Editor 里直接测试 AR 放置和表单提交流程：
+
+1. 在场景中挂载 `EditorModeSetup` 脚本（勾选 Enable Editor Mode）
+2. `ARPlacementManager` 的 Editor Mode 也勾选
+3. ApiClient 的 Server Url 设为 `http://localhost:8080/api`
+4. 启动 Go 后端 → Unity 点 Play → 鼠标左键点击 Game 窗口放置标记
+
+Editor 模式会自动：禁用 AR Session、调整相机视角、创建地面参考平面。真机构建时这些代码通过 `#if UNITY_EDITOR` 编译排除，不影响正式功能。
+
 ## 公网部署（可选）
 
-### Go 后端 → Render
+### 方案 A：Cloudflare Tunnel + Vercel（推荐）
+
+Go 后端跑在本地，cloudflared 隧道暴露公网，React 部署 Vercel：
+
+1. 安装 [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/network/downloads/)
+2. 启动 Go 后端：`cd server && go run ./cmd/server/`
+3. 启动隧道：`cloudflared tunnel --url http://localhost:8080` → 记下公网 URL
+4. React 部署 Vercel，设置 `VITE_API_BASE = <隧道URL>/api`
+
+优点：无需信用卡、SQLite 数据完全持久、国内可访问。缺点：电脑需开机运行。
+
+### 方案 B：Render + Vercel
 
 1. 注册 [Render](https://render.com)（GitHub 登录）
 2. New → Web Service → 连接 GitHub 仓库
@@ -98,16 +120,9 @@ npm run dev
 4. Build Command: `go build -o app ./cmd/server/`
 5. Start Command: `./app`
 6. 部署后记下 URL，如 `https://xxx.onrender.com`
+7. React 部署 Vercel，设置 `VITE_API_BASE = https://xxx.onrender.com/api`
 
-### React 前端 → Vercel
-
-1. 注册 [Vercel](https://vercel.com)（GitHub 登录）
-2. Add New Project → 导入 GitHub 仓库
-3. Root Directory: `web`，Framework: Vite
-4. Environment Variables: `VITE_API_BASE = https://xxx.onrender.com/api`
-5. Deploy
-
-⚠️ Render 免费版限制：15 分钟无流量休眠；重新部署后数据丢失（磁盘非持久）。本地运行时 SQLite 持久化正常。
+⚠️ Render 免费版限制：15 分钟无流量休眠；重新部署后数据丢失（磁盘非持久）；新账号可能要求绑信用卡。
 
 ## 已完成
 
@@ -123,18 +138,23 @@ npm run dev
 - [x] Unity AR：场景搭建（XR Origin + AR Camera + Plane Manager + Raycast Manager + EventSystem）
 - [x] Unity AR：ARMarker 预制体 + IssueForm UI Panel（TMP）
 - [x] Unity AR：脚本挂载 + 引用绑定 + 按钮事件绑定
-- [x] Unity AR：UI 防误触（IsTouchOverUI）
+- [x] Unity AR：UI 防误触（IsPointerOverUI）
 - [x] Unity AR：优先级颜色标记（high=红, medium=黄, low=绿）
 - [x] Unity AR：TMP 组件适配（TMP_InputField / TMP_Dropdown / TextMeshProUGUI）
+- [x] Unity AR：中文字体支持（Microsoft YaHei → TMP SDF 字体资源）
+- [x] Unity AR：Editor 模式（ARPlacementManager + EditorModeSetup，鼠标点击放置标记）
 - [x] Unity Editor 内编译和 UI 交互测试通过
+- [x] 三端联调：Unity Editor → Go 后端 → React 管理端全流程通过
+- [x] 演示视频已录制（Unity Editor 操作 + React 管理端操作）
 
 ## 未完成
 
-- [ ] 真机 AR 测试（需 Mac 构建 iOS 或 Android 设备）
-- [ ] 演示视频（手机 + 电脑各一段）
+- [ ] 真机 AR 测试（需 Mac 构建 iOS 或 Android 设备，Editor 模式已替代验证）
+- [ ] 公网部署（Cloudflare Tunnel 方案待 cloudflared 安装）
 
 ## 已知问题
 
 - Go 后端 ID 生成使用时间戳+毫秒，高并发下可能重复（原型阶段可接受）
 - iOS 构建需要 Mac + Xcode，当前开发环境为 Windows
 - 修改状态后 updatedAt 时间戳与 createdAt 相同（毫秒精度不足，需确认）
+- cloudflared 在国内网络下直接下载失败，需 VPN 或手动安装
