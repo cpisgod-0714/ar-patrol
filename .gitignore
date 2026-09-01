@@ -7,16 +7,19 @@ server/tmp/
 web/node_modules/
 web/dist/
 
-# Unity
-unity-ar/Library/
-unity-ar/Temp/
-unity-ar/Obj/
-unity-ar/Build/
-unity-ar/Builds/
-unity-ar/UserSettings/
-unity-ar/*.csproj
-unity-ar/*.unityproj
-unity-ar/*.sln
+# Unity (通用)
+**/Library/
+**/Temp/
+**/Obj/
+**/Build/
+**/Builds/
+**/Logs/
+**/*.csproj
+**/*.unityproj
+**/*.sln
+
+# Unity UserSettings
+unity-ar/ARPatrol/UserSettings/
 
 # IDE
 .idea/
